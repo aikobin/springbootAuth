@@ -11,14 +11,20 @@ spring:
       username: root
       password: root
   redis:
-    host: 127.0.0.1
     database: 0
-  #  password: grape
+    host: 192.168.32.140
+    port: 6379
+    password:
+    pool:
+      max-active: 8
+      max-wait: -1
+      max-idle: 8
+      min-idle: 0
   jpa:
      hibernate:
          ddl-auto: update
-         naming:
-           physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        # naming:
+        #   physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
      show-sql: true
 eureka:
   instance:

@@ -9,10 +9,10 @@ import javax.persistence.Id;
 public class User {
 
 	@Id
-	@GeneratedValue
-	@Column(name = "id", nullable = false)
-	private Integer id;
-	
+    @GeneratedValue
+    @Column(name = "id", nullable = false)
+    private Integer id;
+
     private String username;
     private String password;
 

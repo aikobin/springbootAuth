@@ -13,7 +13,6 @@
 	<version>0.0.2</version>
 	<packaging>jar</packaging>
 
-
 	<dependencies>
 		<!-- springboot -->
 		<dependency>
@@ -43,6 +42,9 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
+<!--
+			<version>1.5.8.RELEASE</version>
+-->
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
