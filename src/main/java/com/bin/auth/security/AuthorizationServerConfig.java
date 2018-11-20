@@ -25,6 +25,8 @@ import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
 import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
@@ -90,7 +92,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
         security.tokenKeyAccess("permitAll()");
-        security .checkTokenAccess("isAuthenticated()");
+        security.checkTokenAccess("permitAll()");
         security.allowFormAuthenticationForClients();
     }
 
@@ -101,15 +103,25 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         return new DefaultWebResponseExceptionTranslator() {
             @Override
             public ResponseEntity<OAuth2Exception> translate(Exception e) throws Exception {
-                // This is the line that prints the stack trace to the log. You can customise this to format the trace etc if you like
-                e.printStackTrace();
-
-                // Carry on handling the exception
                 ResponseEntity<OAuth2Exception> responseEntity = super.translate(e);
+                OAuth2Exception body = responseEntity.getBody();
                 HttpHeaders headers = new HttpHeaders();
+                Map<String, Object> hash=new HashMap<String,Object>();
+                hash.put("code",body.getHttpErrorCode());
+                hash.put("status",false);
+                if(body.getOAuth2ErrorCode().equals("invalid_token")){
+                    hash.put("msg","输入的token无效");
+
+                }else if(body.getOAuth2ErrorCode().equals("unauthorized")){
+                    hash.put("msg","请输入token");
+                }else if(body.getOAuth2ErrorCode().equals("access_denied")){
+                    hash.put("msg","你输入的token不容许访问该接口");
+                }else{
+                    hash.put("msg",body.getMessage());
+                };
+                headers.add("Accept", "application/json");
                 headers.setAll(responseEntity.getHeaders().toSingleValueMap());
-                OAuth2Exception excBody = responseEntity.getBody();
-                return new ResponseEntity<>(excBody, headers, responseEntity.getStatusCode());
+                return new ResponseEntity(hash, headers, responseEntity.getStatusCode());
             }
         };
     }
